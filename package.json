@@ -1,0 +1,49 @@
+{
+  "private": true,
+  "sideEffects": false,
+  "scripts": {
+    "build": "remix build",
+    "dev:remix": "remix watch",
+    "dev:wrangler": "cross-env NODE_ENV=development npm run wrangler",
+    "dev": "npm-run-all build --parallel \"dev:*\"",
+    "test": "vitest",
+    "start": "cross-env NODE_ENV=production npm run wrangler",
+    "typecheck": "tsc",
+    "wrangler": "wrangler pages dev ./public"
+  },
+  "dependencies": {
+    "@remix-run/cloudflare": "^1.16.1",
+    "@remix-run/cloudflare-pages": "^1.16.1",
+    "@remix-run/css-bundle": "^1.16.1",
+    "@remix-run/react": "^1.16.1",
+    "@vitejs/plugin-react": "^4.0.0",
+    "cross-env": "^7.0.3",
+    "isbot": "^3.6.8",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "remix-utils": "^6.3.0",
+    "vite": "^4.3.9",
+    "vite-tsconfig-paths": "^4.2.0",
+    "vitest": "^0.31.4",
+    "webtorrent": "^2.0.27"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^3.19.0",
+    "@remix-run/dev": "^1.16.1",
+    "@remix-run/eslint-config": "^1.16.1",
+    "@types/react": "^18.0.35",
+    "@types/react-dom": "^18.0.11",
+    "@types/webtorrent": "^0.109.3",
+    "eslint": "^8.38.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "happy-dom": "^9.20.3",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.8.8",
+    "typescript": "^5.0.4",
+    "wrangler": "^2.15.1"
+  },
+  "engines": {
+    "node": ">=16.13"
+  }
+}
