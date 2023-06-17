@@ -1,4 +1,4 @@
-interface MagnetParameters {
+export interface MagnetParameters {
   [key: string]: string | string[];
 }
 

@@ -1,20 +1,20 @@
 const ALPHABET = "0123456789abcdef";
 
-export function hexToUint8Array(str: string) {
-  const sizeof = str.length >> 1;
+export function decodeUint8(encodedBinary: string) {
+  const sizeof = encodedBinary.length >> 1;
   const lookup = createDecodingLookup();
   const array = Array.from(
     { length: sizeof },
     (_, index) =>
-      (lookup[str.charCodeAt(index * 2)] << 4) |
-      lookup[str.charCodeAt(index * 2 + 1)]
+      (lookup[encodedBinary.charCodeAt(index * 2)] << 4) |
+      lookup[encodedBinary.charCodeAt(index * 2 + 1)]
   );
   return new Uint8Array(array);
 }
 
-export function uint8ArrayToHex(data: Uint8Array) {
+export function encodeUint8(binary: Uint8Array) {
   const lookup = createEncodingLookup();
-  const hexArray = Array.from(data, (value) => lookup[value]);
+  const hexArray = Array.from(binary, (value) => lookup[value]);
   return hexArray.join("");
 }
 
