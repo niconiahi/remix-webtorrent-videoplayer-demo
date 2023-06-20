@@ -1,4 +1,4 @@
-import { decodeBase32, encodeBase32 } from "~/utils/base32";
+import { encodeBase32 } from "~/utils/base32";
 
 describe("Base32 Encoding and Decoding", () => {
   describe("encode", () => {
