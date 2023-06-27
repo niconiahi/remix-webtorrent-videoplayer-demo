@@ -1,6 +1,6 @@
 const ALPHABET = "0123456789abcdef";
 
-export function decodeUint8(encodedBinary: string) {
+export function encodeUint8(encodedBinary: string) {
   const sizeof = encodedBinary.length >> 1;
   const lookup = createDecodingLookup();
   const array = Array.from(
@@ -12,7 +12,7 @@ export function decodeUint8(encodedBinary: string) {
   return new Uint8Array(array);
 }
 
-export function encodeUint8(binary: Uint8Array) {
+export function decodeUint8(binary: Uint8Array) {
   const lookup = createEncodingLookup();
   const hexArray = Array.from(binary, (value) => lookup[value]);
   return hexArray.join("");

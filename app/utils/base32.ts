@@ -1,93 +1,123 @@
-import { decodeUint8, encodeUint8 } from "~/utils/uint8";
+const RFC4648 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+const RFC4648_HEX = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
+const CROCKFORD = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
 
-const CHAR_TABLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+type Variant = "RFC3548" | "RFC4648" | "RFC4648-HEX" | "Crockford";
 
-// ENCODING
-export function encodeBase32(_binary: Uint8Array | string): string {
-  const binary = typeof _binary === "string" ? decodeUint8(_binary) : _binary;
-  const binaryData = concatenateBinaryBytes(binary);
-  const segments = splitBinaryIntoSegments(binaryData, 5);
-  const base32String = segments.map(binarySegmentToBase32).join("");
-  const padding = getPadding(binary.length);
+export function encodeBase32(
+  buffer: Uint8Array,
+  variant: Variant = "RFC4648",
+  options: Partial<{ padding: boolean }> = {}
+): string {
+  let alphabet: string;
+  let defaultPadding: boolean;
 
-  return base32String + padding;
-}
-
-function byteToBinary(byte: number): string {
-  return byte.toString(2).padStart(8, "0");
-}
-
-function concatenateBinaryBytes(binary: Uint8Array): string {
-  return Array.from(binary).map(byteToBinary).join("");
-}
-
-function binarySegmentToBase32(binarySegment: string): string {
-  const decimalValue = parseInt(binarySegment, 2);
-
-  return CHAR_TABLE[decimalValue];
-}
-
-function getPadding(binaryLength: number): string {
-  const remainder = binaryLength % 5;
-  if (remainder === 0) {
-    return "";
-  } else {
-    const paddingLength = 5 - remainder + 1;
-    return "=".repeat(paddingLength);
+  switch (variant) {
+    case "RFC3548":
+    case "RFC4648":
+      alphabet = RFC4648;
+      defaultPadding = true;
+      break;
+    case "RFC4648-HEX":
+      alphabet = RFC4648_HEX;
+      defaultPadding = true;
+      break;
+    case "Crockford":
+      alphabet = CROCKFORD;
+      defaultPadding = false;
+      break;
+    default:
+      throw new Error(`Unknown base32 variant: ${variant as string}`);
   }
-}
 
-// DECODING
-export function decodeBase32(input: string | Uint8Array): string {
-  const base32String = typeof input === "string" ? input : encodeUint8(input);
-  const binaryValues = Array.from(base32String)
-    .filter((char) => char !== "=")
-    .map(base32ToBinary);
-  const binaryData = concatenateBinaryValues(binaryValues);
-  const segments = splitBinaryIntoSegments(binaryData, 8);
-  const decodedString = segments
-    .filter((segment) => segment !== "00000000")
-    .map(binaryToAscii)
-    .join("");
+  const padding = options.padding ?? defaultPadding;
+  const length = buffer.byteLength;
+  const view = new Uint8Array(buffer);
 
-  return decodedString;
-}
+  let bits = 0;
+  let value = 0;
+  let output = "";
 
-function base32ToBinary(base32Char: string): string {
-  const charCode = base32Char.charCodeAt(0);
-  if (charCode >= 50 && charCode <= 55) {
-    // Numeric characters '2' to '7'
-    return (charCode - 24).toString(2).padStart(5, "0");
-  } else if (charCode >= 65 && charCode <= 90) {
-    // Uppercase letters 'A' to 'Z'
-    return (charCode - 65).toString(2).padStart(5, "0");
-  } else {
-    throw new Error("Invalid Base32 character: " + base32Char);
-  }
-}
+  for (let i = 0; i < length; i++) {
+    value = (value << 8) | view[i]!;
+    bits += 8;
 
-function concatenateBinaryValues(binaryValues: string[]): string {
-  return binaryValues.join("");
-}
-
-function splitBinaryIntoSegments(
-  binaryData: string,
-  segmentSize: number
-): string[] {
-  const segments: string[] = [];
-  let i = 0;
-  while (i < binaryData.length) {
-    let segment = binaryData.slice(i, i + segmentSize);
-    if (segment.length < segmentSize) {
-      segment += "0".repeat(segmentSize - segment.length);
+    while (bits >= 5) {
+      output += alphabet[(value >>> (bits - 5)) & 31];
+      bits -= 5;
     }
-    segments.push(segment);
-    i += segmentSize;
   }
-  return segments;
+
+  if (bits > 0) {
+    output += alphabet[(value << (5 - bits)) & 31];
+  }
+
+  if (padding) {
+    while (output.length % 8 !== 0) {
+      output += "=";
+    }
+  }
+
+  return output;
 }
 
-function binaryToAscii(binarySegment: string): string {
-  const decimalValue = parseInt(binarySegment, 2);
-  return String.fromCharCode(decimalValue);
+function readChar(alphabet: string, char: string): number {
+  const idx = alphabet.indexOf(char);
+
+  if (idx === -1) {
+    throw new Error("Invalid character found: " + char);
+  }
+
+  return idx;
+}
+
+export function decodeBase32(
+  input: string,
+  variant: Variant = "RFC4648"
+): Uint8Array {
+  let alphabet: string;
+  let cleanedInput: string;
+
+  switch (variant) {
+    case "RFC3548":
+    case "RFC4648":
+      alphabet = RFC4648;
+      cleanedInput = input.toUpperCase().replace(/=+$/, "");
+      break;
+    case "RFC4648-HEX":
+      alphabet = RFC4648_HEX;
+      cleanedInput = input.toUpperCase().replace(/=+$/, "");
+      break;
+    case "Crockford":
+      alphabet = CROCKFORD;
+      cleanedInput = input
+        .toUpperCase()
+        .replace(/O/g, "0")
+        .replace(/[IL]/g, "1");
+      break;
+    default:
+      throw new Error(`Unknown base32 variant: ${variant as string}`);
+  }
+
+  const { length } = cleanedInput;
+  console.log("cleanedInput:", cleanedInput);
+
+  let bits = 0;
+  let value = 0;
+
+  let index = 0;
+  const output = new Uint8Array(((length * 5) / 8) | 0);
+
+  for (let i = 0; i < length; i++) {
+    console.log("cleanedInput[i]:", cleanedInput[i]);
+    value = (value << 5) | readChar(alphabet, cleanedInput[i]!);
+    bits += 5;
+
+    if (bits >= 8) {
+      output[index++] = (value >>> (bits - 8)) & 255;
+      bits -= 8;
+    }
+  }
+
+  return output;
 }

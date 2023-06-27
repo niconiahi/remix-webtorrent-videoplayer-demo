@@ -1,7 +1,6 @@
-import type { MagnetParameters } from "~/utils/magnet";
+import { decodeUint8, encodeUint8 } from "~/utils/uint8";
+import type { MagnetData } from "~/utils/magnet";
 import { decodeMagnet } from "~/utils/magnet";
-import { encodeUint8 } from "~/utils/uint8";
-// import { decodeBencode } from "~/utils/bencode";
 
 enum TorrentError {
   InvalidId = "INVALID_ID",
@@ -29,8 +28,9 @@ interface ParsedTorrent {
 
 export async function decodeTorrent(
   torrentId: string | Uint8Array | ParsedTorrent
-): Promise<ParsedTorrent> {
+): Promise<MagnetData> {
   if (typeof torrentId === "string" && /^(stream-)?magnet:/.test(torrentId)) {
+    console.log("decoding magnet");
     return getTorrentFromMagnet(torrentId);
   }
 
@@ -50,39 +50,24 @@ export async function decodeTorrent(
   //   throw new Error(TorrentError.InvalidBencoded);
   // }
 
-  if (isTorrent(torrentId)) {
-    return torrentId;
-  }
+  // if (isTorrent(torrentId)) {
+  //   return torrentId;
+  // }
 
   throw new Error(TorrentError.InvalidId);
 }
 
-function getTorrentFromMagnet(torrentId: string): ParsedTorrent {
+function getTorrentFromMagnet(torrentId: string): MagnetData {
   if (!/^(stream-)?magnet:/.test(torrentId)) {
     throw new Error(TorrentError.InvalidMagnet);
   }
 
   const magnetParameters = decodeMagnet(torrentId);
 
-  if (isParsedTorrent(magnetParameters)) {
-    throw new Error(TorrentError.InvalidMagnet);
-  }
-
   return magnetParameters;
 }
 
-function isParsedTorrent<K extends keyof MagnetParameters>(
-  parameters: MagnetParameters
-): parameters is MagnetParameters & { [P in K]: string | string[] } {
-  const KEY = "info-hash";
-
-  return (
-    (typeof parameters[KEY] === "string" && parameters[KEY].length > 0) ||
-    Array.isArray(parameters[KEY])
-  );
-}
-
-function getTorrentFromInfoHash(torrentId: string): ParsedTorrent {
+function getTorrentFromInfoHash(torrentId: string): MagnetData {
   if (
     !/^[a-f0-9]{40}$/i.test(torrentId) &&
     !/^[a-z2-7]{32}$/i.test(torrentId)
@@ -93,10 +78,10 @@ function getTorrentFromInfoHash(torrentId: string): ParsedTorrent {
   return getTorrentFromMagnet(`magnet:?xt=urn:btih:${torrentId}`);
 }
 
-function getTorrentFromBuffer(torrentId: Uint8Array): ParsedTorrent {
+function getTorrentFromBuffer(torrentId: Uint8Array): MagnetData {
   if (torrentId.length !== 20) throw new Error(TorrentError.InvalidBuffer);
 
-  return getTorrentFromMagnet(`magnet:?xt=urn:btih:${encodeUint8(torrentId)}`);
+  return getTorrentFromMagnet(`magnet:?xt=urn:btih:${decodeUint8(torrentId)}`);
 }
 
 function isTorrent(torrentId: any): torrentId is ParsedTorrent {
