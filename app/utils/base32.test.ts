@@ -7,7 +7,7 @@ import {
   encodeBase32,
   replaceEmptyBitsWithZeroes,
   stringToAscii,
-} from "./_base32";
+} from "./base32";
 
 describe("encodeBase32", () => {
   test('encodes "Cat" correctly', () => {
