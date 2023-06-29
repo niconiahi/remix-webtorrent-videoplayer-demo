@@ -1,12 +1,21 @@
 import {
   asciiToBinary,
+  asciiToString,
+  binaryToAscii,
   binaryToDecimal,
   createBitsGroup,
+  createGroupsOfEight,
+  createGroupsOfEightFromFive,
   createGroupsOfFive,
+  decimalToBinary,
   decimalToSymbol,
+  decodeBase32,
+  deleteEmptyChunks,
   encodeBase32,
   replaceEmptyBitsWithZeroes,
+  replaceZeroesWithEmptyBits,
   stringToAscii,
+  symbolToDecimal,
 } from "./base32";
 
 describe("encodeBase32", () => {
@@ -274,5 +283,209 @@ describe("decimalToSymbol", () => {
       ["E", "B", "L", "W", "6", "4", "T", "M"],
       ["M", "Q", "=", "=", "=", "=", "=", "="],
     ]);
+  });
+});
+
+describe("decodeBase32", () => {
+  test('decodes "JBSWY3DPEBLW64TMMQ======" correctly', () => {
+    expect(decodeBase32("JBSWY3DPEBLW64TMMQ======")).toBe("Hello World");
+  });
+
+  test('decodes "IEQG4ZLXEB3WKYRAMFYHA3DJMNQXI2LPNYQGM33SEB2G64TSMVXHI4ZANFZSAY3PNVUW4ZZMEBVHK43UEB3WC2LUEBTG64RANF2A====" correctly', () => {
+    expect(
+      decodeBase32(
+        "IEQG4ZLXEB3WKYRAMFYHA3DJMNQXI2LPNYQGM33SEB2G64TSMVXHI4ZANFZSAY3PNVUW4ZZMEBVHK43UEB3WC2LUEBTG64RANF2A===="
+      )
+    ).toBe("A new web application for torrents is coming, just wait for it");
+  });
+});
+
+describe("createGroupsOfEight", () => {
+  test(`replaces zeroes for [8, 13, 16, 23, 8, "=", "=", "="] correctly`, () => {
+    expect(createGroupsOfEight("JBSWY3DPEBLW64TMMQ======")).toStrictEqual([
+      ["J", "B", "S", "W", "Y", "3", "D", "P"],
+      ["E", "B", "L", "W", "6", "4", "T", "M"],
+      ["M", "Q", "=", "=", "=", "=", "=", "="],
+    ]);
+  });
+});
+
+describe("createGroupsOfEight", () => {
+  test(`replaces zeroes for [8, 13, 16, 23, 8, "=", "=", "="] correctly`, () => {
+    expect(createGroupsOfEight("JBSWY3DPEBLW64TMMQ======")).toStrictEqual([
+      ["J", "B", "S", "W", "Y", "3", "D", "P"],
+      ["E", "B", "L", "W", "6", "4", "T", "M"],
+      ["M", "Q", "=", "=", "=", "=", "=", "="],
+    ]);
+  });
+});
+
+describe("symbolToDecimal", () => {
+  test(`replaces zeroes for [8, 13, 16, 23, 8, "=", "=", "="] correctly`, () => {
+    expect(
+      symbolToDecimal([
+        ["J", "B", "S", "W", "Y", "3", "D", "P"],
+        ["E", "B", "L", "W", "6", "4", "T", "M"],
+        ["M", "Q", "=", "=", "=", "=", "=", "="],
+      ])
+    ).toStrictEqual([
+      [9, 1, 18, 22, 24, 27, 3, 15],
+      [4, 1, 11, 22, 30, 28, 19, 12],
+      [12, 16, "=", "=", "=", "=", "=", "="],
+    ]);
+  });
+});
+
+describe("decimalToBinary", () => {
+  test(`replaces zeroes for [8, 13, 16, 23, 8, "=", "=", "="] correctly`, () => {
+    expect(
+      decimalToBinary([
+        [9, 1, 18, 22, 24, 27, 3, 15],
+        [4, 1, 11, 22, 30, 28, 19, 12],
+        [12, 16, "=", "=", "=", "=", "=", "="],
+      ])
+    ).toStrictEqual([
+      ["01001", "00001", "10010", "10110", "11000", "11011", "00011", "01111"],
+      ["00100", "00001", "01011", "10110", "11110", "11100", "10011", "01100"],
+      ["01100", "10000", "=", "=", "=", "=", "=", "="],
+    ]);
+  });
+});
+
+describe("replaceZeroesWithEmptyBits", () => {
+  test(`replaces zeroes for [8, 13, 16, 23, 8, "=", "=", "="] correctly`, () => {
+    expect(
+      replaceZeroesWithEmptyBits([
+        [
+          "01001",
+          "00001",
+          "10010",
+          "10110",
+          "11000",
+          "11011",
+          "00011",
+          "01111",
+        ],
+        [
+          "00100",
+          "00001",
+          "01011",
+          "10110",
+          "11110",
+          "11100",
+          "10011",
+          "01100",
+        ],
+        [
+          "01100",
+          "10000",
+          "xxxxx",
+          "xxxxx",
+          "xxxxx",
+          "xxxxx",
+          "xxxxx",
+          "xxxxx",
+        ],
+      ])
+    ).toStrictEqual([
+      ["01001", "00001", "10010", "10110", "11000", "11011", "00011", "01111"],
+      ["00100", "00001", "01011", "10110", "11110", "11100", "10011", "01100"],
+      ["01100", "100xx", "xxxxx", "xxxxx", "xxxxx", "xxxxx", "xxxxx", "xxxxx"],
+    ]);
+  });
+});
+
+describe("replaceZeroesWithEmptyBits", () => {
+  test(`replaces zeroes for [8, 13, 16, 23, 8, "=", "=", "="] correctly`, () => {
+    expect(
+      createGroupsOfEightFromFive([
+        [
+          "01001",
+          "00001",
+          "10010",
+          "10110",
+          "11000",
+          "11011",
+          "00011",
+          "01111",
+        ],
+        [
+          "00100",
+          "00001",
+          "01011",
+          "10110",
+          "11110",
+          "11100",
+          "10011",
+          "01100",
+        ],
+        [
+          "01100",
+          "100xx",
+          "xxxxx",
+          "xxxxx",
+          "xxxxx",
+          "xxxxx",
+          "xxxxx",
+          "xxxxx",
+        ],
+      ])
+    ).toStrictEqual([
+      ["01001000", "01100101", "01101100", "01101100", "01101111"],
+      ["00100000", "01010111", "01101111", "01110010", "01101100"],
+      ["01100100", "xxxxxxxx", "xxxxxxxx", "xxxxxxxx", "xxxxxxxx"],
+    ]);
+  });
+});
+
+describe("deleteEmptyChunks", () => {
+  test(`replaces zeroes for [8, 13, 16, 23, 8, "=", "=", "="] correctly`, () => {
+    expect(
+      deleteEmptyChunks([
+        ["01001000", "01100101", "01101100", "01101100", "01101111"],
+        ["00100000", "01010111", "01101111", "01110010", "01101100"],
+        ["01100100", "xxxxxxxx", "xxxxxxxx", "xxxxxxxx", "xxxxxxxx"],
+      ])
+    ).toStrictEqual([
+      "01001000",
+      "01100101",
+      "01101100",
+      "01101100",
+      "01101111",
+      "00100000",
+      "01010111",
+      "01101111",
+      "01110010",
+      "01101100",
+      "01100100",
+    ]);
+  });
+});
+
+describe("binaryToAscii", () => {
+  test(`replaces zeroes for [8, 13, 16, 23, 8, "=", "=", "="] correctly`, () => {
+    expect(
+      binaryToAscii([
+        "01001000",
+        "01100101",
+        "01101100",
+        "01101100",
+        "01101111",
+        "00100000",
+        "01010111",
+        "01101111",
+        "01110010",
+        "01101100",
+        "01100100",
+      ])
+    ).toStrictEqual([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]);
+  });
+});
+
+describe("binaryToAscii", () => {
+  test(`replaces zeroes for [8, 13, 16, 23, 8, "=", "=", "="] correctly`, () => {
+    expect(
+      asciiToString([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100])
+    ).toStrictEqual(["H", "e", "l", "l", "o", " ", "W", "o", "r", "l", "d"]);
   });
 });
