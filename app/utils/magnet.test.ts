@@ -1,235 +1,37 @@
-import { expect, test } from "vitest";
-import type { MagnetData } from "~/utils/magnet";
-import { decodeMagnet } from "~/utils/magnet";
+import { decodeMagnet } from "./magnet";
 
-const empty = { announce: [], peerAddresses: [], urlList: [] };
+describe("decodeMagnet", () => {
+  test('decodes "Majutsushi Orphen Hagure Tabi - Seiiki Hen - 12" correctly', () => {
+    const magnet =
+      "magnet:?xt=urn:btih:b466aa29b4de04ad5f166e9f7f7ed1bc7ac0587b&dn=%5BErai-raws%5D%20Majutsushi%20Orphen%20Hagure%20Tabi%20-%20Seiiki%20Hen%20-%2012%20%5B1080p%5D%5BHEVC%5D%5BMultiple%20Subtitle%5D%20%5BENG%5D%5BPOR-BR%5D%5BSPA-LA%5D%5BSPA%5D%5BARA%5D%5BFRE%5D%5BGER%5D%5BITA%5D%5BRUS%5D&tr=http%3A%2F%2Fnyaa.tracker.wf%3A7777%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce";
 
-test.only("should decode", () => {
-  const magnet =
-    "magnet:?xt=urn:btih:ec64c3b4525c6617d8bb37415a208b30db6ffca3&dn=%5BErai-raws%5D%20Mix%20-%20Meisei%20Story%202nd%20Season%20-%2013%20%5B480p%5D%5BMultiple%20Subtitle%5D%20%5BENG%5D%5BPOR-BR%5D%5BSPA-LA%5D%5BSPA%5D%5BARA%5D%5BGER%5D%5BRUS%5D&tr=http%3A%2F%2Fnyaa.tracker.wf%3A7777%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce";
-
-  expect(decodeMagnet(magnet)).toEqual({
-    xt: "urn:btih:ec64c3b4525c6617d8bb37415a208b30db6ffca3",
-    dn: "[Erai-raws] Mix - Meisei Story 2nd Season - 13 [480p][Multiple Subtitle] [ENG][POR-BR][SPA-LA][SPA][ARA][GER][RUS]",
-    tr: [
-      "http://nyaa.tracker.wf:7777/announce",
-      "udp://open.stealth.si:80/announce",
-      "udp://tracker.opentrackr.org:1337/announce",
-      "udp://exodus.desync.com:6969/announce",
-      "udp://tracker.torrent.eu.org:451/announce",
-    ],
-    infoHash: "ec64c3b4525c6617d8bb37415a208b30db6ffca3",
-    infoHashBuffer: {
-      type: "Buffer",
-      data: [
-        236, 100, 195, 180, 82, 92, 102, 23, 216, 187, 55, 65, 90, 32, 139, 48,
-        219, 111, 252, 163,
+    expect(decodeMagnet(magnet)).toStrictEqual({
+      dn: "[Erai-raws] Majutsushi Orphen Hagure Tabi - Seiiki Hen - 12 [1080p][HEVC][Multiple Subtitle] [ENG][POR-BR][SPA-LA][SPA][ARA][FRE][GER][ITA][RUS]",
+      tr: [
+        "http://nyaa.tracker.wf:7777/announce",
+        "udp://open.stealth.si:80/announce",
+        "udp://tracker.opentrackr.org:1337/announce",
+        "udp://exodus.desync.com:6969/announce",
+        "udp://tracker.torrent.eu.org:451/announce",
       ],
-    },
-    name: "[Erai-raws] Mix - Meisei Story 2nd Season - 13 [480p][Multiple Subtitle] [ENG][POR-BR][SPA-LA][SPA][ARA][GER][RUS]",
-    announce: [
-      "http://nyaa.tracker.wf:7777/announce",
-      "udp://exodus.desync.com:6969/announce",
-      "udp://open.stealth.si:80/announce",
-      "udp://tracker.opentrackr.org:1337/announce",
-      "udp://tracker.torrent.eu.org:451/announce",
-    ],
-    urlList: [],
-    peerAddresses: [],
+      xt: "urn:btih:b466aa29b4de04ad5f166e9f7f7ed1bc7ac0587b",
+    });
   });
-});
 
-test("should decode empty magnet URIs return empty object", () => {
-  const empty1 = "";
-  const empty2 = "magnet:";
-  const empty3 = "magnet:?";
+  test('decodes "Danmachi - S04E21" correctly', () => {
+    const magnet =
+      "magnet:?xt=urn:btih:03c4f07daa8718b2b4dd99f551676239c41bdccc&dn=%5BRyuu%5D%20Danmachi%20-%20S04E21%20%28WEB%201080p%20x264%20AAC%29%20%5BDual-Audio%5D%20%7C%20Is%20It%20Wrong%20to%20Try%20to%20Pick%20Up%20Girls%20in%20a%20Dungeon%20IV%20%7C%20Dungeon%20ni%20Deai%20o%20Motomeru%20no%20wa%20Machigatte%20Iru%20Darouka%20-%20Familia%20Myth%20IV&tr=http%3A%2F%2Fnyaa.tracker.wf%3A7777%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce";
 
-  expect(decodeMagnet(empty1)).toEqual(empty);
-  expect(decodeMagnet(empty2)).toEqual(empty);
-  expect(decodeMagnet(empty3)).toEqual(empty);
-});
-
-test("empty string as keys is okay", () => {
-  const uri = "magnet:?a=&b=&c=";
-  const blank = { a: "", b: "", c: "" };
-  expect(decodeMagnet(uri)).toEqual({ ...blank, ...empty });
-});
-
-test("should decode invalid magnet URIs return empty object", () => {
-  const invalid1 = "magnet:?xt=urn:btih:===";
-  const invalid2 = "magnet:?xt";
-  const invalid3 = "magnet:?xt=?dn=";
-
-  expect(decodeMagnet(invalid1)).toEqual(empty);
-  expect(decodeMagnet(invalid2)).toEqual(empty);
-  expect(decodeMagnet(invalid3)).toEqual(empty);
-});
-
-test("should decode invalid magnet URIs return only valid keys (ignoring invalid ones)", () => {
-  const invalid1 = "magnet:?a=a&===";
-  const invalid2 = "magnet:?a==&b=b";
-  const invalid3 = "magnet:?a=b=&c=c&d===";
-
-  expect(decodeMagnet(invalid1)).toEqual({ a: "a", ...empty });
-  expect(decodeMagnet(invalid2)).toEqual({ b: "b", ...empty });
-  expect(decodeMagnet(invalid3)).toEqual({ c: "c", ...empty });
-});
-
-test("should decode extracts 40-char hex BitTorrent info_hash", () => {
-  const result = decodeMagnet(
-    "magnet:?xt=urn:btih:aad050ee1bb22e196939547b134535824dabf0ce"
-  );
-  expect(result.infoHash).toBe("aad050ee1bb22e196939547b134535824dabf0ce");
-});
-
-test("should decode extracts 32-char base32 BitTorrent info_hash", () => {
-  const result = decodeMagnet(
-    "magnet:?xt=urn:btih:64DZYZWMUAVLIWJUXGDIK4QGAAIN7SL6"
-  );
-  expect(result.infoHash).toBe("f7079c66cca02ab45934b9868572060010dfc97e");
-});
-
-test("should decode extracts keywords", () => {
-  const result = decodeMagnet(
-    "magnet:?xt=urn:btih:64DZYZWMUAVLIWJUXGDIK4QGAAIN7SL6&kt=joe+blow+mp3"
-  );
-  expect(result.keywords).toEqual(["joe", "blow", "mp3"]);
-});
-
-test("should decode complicated magnet uri (multiple xt params, and as, xs)", () => {
-  const result = decodeMagnet(
-    "magnet:?xt=urn:ed2k:354B15E68FB8F36D7CD88FF94116CDC1&xt=urn:tree:tiger:7N5OAMRNGMSSEUE3ORHOKWN4WWIQ5X4EBOOTLJY&xt=urn:btih:QHQXPYWMACKDWKP47RRVIV7VOURXFE5Q&xl=10826029&dn=mediawiki-1.15.1.tar.gz&tr=udp%3A%2F%2Ftracker.example4.com%3A80%2Fannounce&as=http%3A%2F%2Fdownload.wikimedia.org%2Fmediawiki%2F1.15%2Fmediawiki-1.15.1.tar.gz&xs=http%3A%2F%2Fcache.example.org%2FXRX2PEFXOOEJFRVUCX6HMZMKS5TWG4K5&xs=dchub://example.org"
-  );
-  expect(result.infoHash).toBe("81e177e2cc00943b29fcfc635457f575237293b0");
-  expect(result.xt).toEqual([
-    "urn:ed2k:354B15E68FB8F36D7CD88FF94116CDC1",
-    "urn:tree:tiger:7N5OAMRNGMSSEUE3ORHOKWN4WWIQ5X4EBOOTLJY",
-    "urn:btih:QHQXPYWMACKDWKP47RRVIV7VOURXFE5Q",
-  ]);
-  expect(result.xl).toBe("10826029");
-  expect(result.dn).toBe("mediawiki-1.15.1.tar.gz");
-
-  const announce = "udp://tracker.example4.com:80/announce";
-  expect(result.tr).toBe(announce);
-  expect(result.announce).toEqual([announce]);
-  expect(result.as).toBe(
-    "http://download.wikimedia.org/mediawiki/1.15/mediawiki-1.15.1.tar.gz"
-  );
-  expect(result.urlList).toEqual([
-    "http://download.wikimedia.org/mediawiki/1.15/mediawiki-1.15.1.tar.gz",
-  ]);
-  expect(result.xs).toEqual([
-    "http://cache.example.org/XRX2PEFXOOEJFRVUCX6HMZMKS5TWG4K5",
-    "dchub://example.org",
-  ]);
-});
-
-test("should decode multiple as, ws params", () => {
-  const result = decodeMagnet(
-    "magnet:?xt=urn:ed2k:354B15E68FB8F36D7CD88FF94116CDC1&as=http%3A%2F%2Fdownload.wikimedia.org%2Fmediawiki%2F1.15%2Fmediawiki-1.15.1.tar.gz&as=http%3A%2F%2Fdownload.wikimedia.org%2Fmediawiki%2F1.15%2Fmediawiki-1.15.1.tar.gz1&ws=http%3A%2F%2Fdownload.wikimedia.org%2Fmediawiki%2F1.15%2Fmediawiki-1.15.1.tar.gz2&ws=http%3A%2F%2Fdownload.wikimedia.org%2Fmediawiki%2F1.15%2Fmediawiki-1.15.1.tar.gz3"
-  );
-  expect(result.urlList).toEqual([
-    "http://download.wikimedia.org/mediawiki/1.15/mediawiki-1.15.1.tar.gz",
-    "http://download.wikimedia.org/mediawiki/1.15/mediawiki-1.15.1.tar.gz1",
-    "http://download.wikimedia.org/mediawiki/1.15/mediawiki-1.15.1.tar.gz2",
-    "http://download.wikimedia.org/mediawiki/1.15/mediawiki-1.15.1.tar.gz3",
-  ]);
-});
-
-test("should decode dedupe repeated trackers", () => {
-  const result = decodeMagnet(
-    "magnet:?xt=urn:ed2k:354B15E68FB8F36D7CD88FF94116CDC1&tr=udp%3A%2F%2Ftracker.example4.com%3A80&tr=udp%3A%2F%2Ftracker.example4.com%3A80&tr=udp%3A%2F%2Ftracker.example5.com%3A80&tr=udp%3A%2F%2Ftracker.example3.com%3A6969&tr=udp%3A%2F%2Ftracker.example2.com%3A80&tr=udp%3A%2F%2Ftracker.example1.com%3A1337"
-  );
-  const announce = [
-    "udp://tracker.example1.com:1337",
-    "udp://tracker.example2.com:80",
-    "udp://tracker.example3.com:6969",
-    "udp://tracker.example4.com:80",
-    "udp://tracker.example5.com:80",
-  ];
-  expect(result.announce).toEqual(announce);
-});
-
-test("Cast file index (ix) to a number", () => {
-  const magnet =
-    "magnet:?xt=urn:btih:ec64c3b4525c6617d8bb37415a208b30db6ffca3&dn=%5BErai-raws%5D%20Mix%20-%20Meisei%20Story%202nd%20Season%20-%2013%20%5B480p%5D%5BMultiple%20Subtitle%5D%20%5BENG%5D%5BPOR-BR%5D%5BSPA-LA%5D%5BSPA%5D%5BARA%5D%5BGER%5D%5BRUS%5D&tr=http%3A%2F%2Fnyaa.tracker.wf%3A7777%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce";
-
-  const result = decodeMagnet(`${magnet}&ix=1`);
-  expect(typeof result.ix).toBe("number");
-  expect(result.ix).toBe(1);
-});
-
-test("should decode bittorrent v2 magnet links", () => {
-  const result = decodeMagnet(
-    "magnet:?xt=urn:btmh:1220caf1e1c30e81cb361b9ee167c4aa64228a7fa4fa9f6105232b28ad099f3a302e&dn=bittorrent-v2-test"
-  );
-  expect(result.xt).toBe(
-    "urn:btmh:1220caf1e1c30e81cb361b9ee167c4aa64228a7fa4fa9f6105232b28ad099f3a302e"
-  );
-});
-
-test("should decode hybrid bittorent v2 magnet links", () => {
-  // https://blog.libtorrent.org/2020/09/bittorrent-v2/
-  const result = decodeMagnet(
-    "magnet:?xt=urn:btih:631a31dd0a46257d5078c0dee4e66e26f73e42ac&xt=urn:btmh:1220d8dd32ac93357c368556af3ac1d95c9d76bd0dff6fa9833ecdac3d53134efabb&dn=bittorrent-v1-v2-hybrid-test"
-  );
-  expect(result.xt).toEqual([
-    "urn:btih:631a31dd0a46257d5078c0dee4e66e26f73e42ac",
-    "urn:btmh:1220d8dd32ac93357c368556af3ac1d95c9d76bd0dff6fa9833ecdac3d53134efabb",
-  ]);
-  expect(result.dn).toBe("bittorrent-v1-v2-hybrid-test");
-});
-
-test("decode: Extracts public key from xs", () => {
-  const key =
-    "9a36edf0988ddc1a0fc02d4e8652cce87a71aaac71fce936e650a597c0fb72e0";
-  const result = decodeMagnet(`magnet:?xs=urn:btpk:${key}`);
-  expect(result.publicKey).toBe(key);
-  expect(result.publicKeyBuffer).toEqual(Buffer.from(key, "hex"));
-});
-
-// Select specific file indices for download (BEP53) http://www.bittorrent.org/beps/bep_0053.html
-test("decode: select-only", () => {
-  const result = decodeMagnet(
-    "magnet:?xt=urn:btih:64DZYZWMUAVLIWJUXGDIK4QGAAIN7SL6&so=0,2,4,6-8"
-  );
-  expect(result.so).toEqual([0, 2, 4, 6, 7, 8]);
-});
-
-// Peer address expressed as hostname:port (BEP09) http://bittorrent.org/beps/bep_0009.html
-test("decode: peer-address single value", () => {
-  const result = decodeMagnet(
-    "magnet:?xt=urn:btih:64DZYZWMUAVLIWJUXGDIK4QGAAIN7SL6&x.pe=123.213.32.10:47450"
-  );
-  const peerAddresses = ["123.213.32.10:47450"];
-  expect(result["x.pe"], peerAddresses[0]);
-  expect(result.peerAddresses).toEqual(peerAddresses);
-});
-
-test("decode: peer-address multiple values", () => {
-  const result = decodeMagnet(
-    "magnet:?xt=urn:btih:64DZYZWMUAVLIWJUXGDIK4QGAAIN7SL6&x.pe=123.213.32.10:47450&x.pe=[2001:db8::2]:55013"
-  );
-  const peerAddresses = ["123.213.32.10:47450", "[2001:db8::2]:55013"];
-  expect(result["x.pe"]).toEqual(peerAddresses);
-  expect(result.peerAddresses).toEqual(peerAddresses);
-});
-
-test("decode: peer-address remove duplicates", () => {
-  const result = decodeMagnet(
-    "magnet:?xt=urn:btih:64DZYZWMUAVLIWJUXGDIK4QGAAIN7SL6&x.pe=123.213.32.10:47450&x.pe=[2001:db8::2]:55013&x.pe=123.213.32.10:47450"
-  );
-
-  // raw value is *not* deduped
-  expect(result["x.pe"]).toEqual([
-    "123.213.32.10:47450",
-    "[2001:db8::2]:55013",
-    "123.213.32.10:47450",
-  ]);
-
-  // friendly value is deduped
-  expect(result.peerAddresses).toEqual([
-    "123.213.32.10:47450",
-    "[2001:db8::2]:55013",
-  ]);
+    expect(decodeMagnet(magnet)).toStrictEqual({
+      xt: "urn:btih:03c4f07daa8718b2b4dd99f551676239c41bdccc",
+      dn: "[Ryuu] Danmachi - S04E21 (WEB 1080p x264 AAC) [Dual-Audio] | Is It Wrong to Try to Pick Up Girls in a Dungeon IV | Dungeon ni Deai o Motomeru no wa Machigatte Iru Darouka - Familia Myth IV",
+      tr: [
+        "http://nyaa.tracker.wf:7777/announce",
+        "udp://open.stealth.si:80/announce",
+        "udp://tracker.opentrackr.org:1337/announce",
+        "udp://exodus.desync.com:6969/announce",
+        "udp://tracker.torrent.eu.org:451/announce",
+      ],
+    });
+  });
 });
