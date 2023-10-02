@@ -16,7 +16,7 @@ import {
   replaceZeroesWithEmptyBits,
   stringToAscii,
   symbolToDecimal,
-} from "./base32";
+} from "~/utils/base32";
 
 describe("encodeBase32", () => {
   test('encodes "Cat" correctly', () => {

@@ -1,4 +1,4 @@
-import { decodeMagnet } from "./magnet";
+import { decodeMagnet } from "~/utils/magnet";
 
 describe("decodeMagnet", () => {
   test('decodes "Majutsushi Orphen Hagure Tabi - Seiiki Hen - 12" correctly', () => {
@@ -6,6 +6,7 @@ describe("decodeMagnet", () => {
       "magnet:?xt=urn:btih:b466aa29b4de04ad5f166e9f7f7ed1bc7ac0587b&dn=%5BErai-raws%5D%20Majutsushi%20Orphen%20Hagure%20Tabi%20-%20Seiiki%20Hen%20-%2012%20%5B1080p%5D%5BHEVC%5D%5BMultiple%20Subtitle%5D%20%5BENG%5D%5BPOR-BR%5D%5BSPA-LA%5D%5BSPA%5D%5BARA%5D%5BFRE%5D%5BGER%5D%5BITA%5D%5BRUS%5D&tr=http%3A%2F%2Fnyaa.tracker.wf%3A7777%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce";
 
     expect(decodeMagnet(magnet)).toStrictEqual({
+      xt: "urn:btih:b466aa29b4de04ad5f166e9f7f7ed1bc7ac0587b",
       dn: "[Erai-raws] Majutsushi Orphen Hagure Tabi - Seiiki Hen - 12 [1080p][HEVC][Multiple Subtitle] [ENG][POR-BR][SPA-LA][SPA][ARA][FRE][GER][ITA][RUS]",
       tr: [
         "http://nyaa.tracker.wf:7777/announce",
@@ -14,7 +15,6 @@ describe("decodeMagnet", () => {
         "udp://exodus.desync.com:6969/announce",
         "udp://tracker.torrent.eu.org:451/announce",
       ],
-      xt: "urn:btih:b466aa29b4de04ad5f166e9f7f7ed1bc7ac0587b",
     });
   });
 

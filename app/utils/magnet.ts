@@ -2,6 +2,7 @@ export function decodeMagnet(encodedMagnet: string) {
   if (!encodedMagnet.includes("magnet:?")) {
     throw new Error("invalid magnet URL");
   }
+
   const parts = encodedMagnet
     .replace("magnet:?", "")
     .split("&")
@@ -20,7 +21,8 @@ export function decodeMagnet(encodedMagnet: string) {
       {}
     )
   );
-  const data = groups.reduce<{ [group: string]: string | string[] }>(
+
+  const magnet = groups.reduce<{ [group: string]: string | string[] }>(
     (prevData, group) => {
       const key = group[0];
       const nextValue = getNextValue(group);
@@ -30,8 +32,7 @@ export function decodeMagnet(encodedMagnet: string) {
     {}
   );
 
-  console.log("decodeMagnet ~ data:", data);
-  return data;
+  return magnet;
 }
 
 function getNextValue([key, value]: [string, string | string[]]) {
