@@ -16,3 +16,13 @@ export function decodeTorrent(torrentId: string) {
 
   throw new Error(TorrentError.InvalidId);
 }
+
+export function hexToBinary(hex: string) {
+  const bytes = Array.from({ length: hex.length / 2 }, (_, i) =>
+    parseInt(hex.slice(i * 2, i * 2 + 2), 16)
+  );
+
+  return Array.from(bytes, (byte) => {
+    return "%" + ("00" + byte.toString(16)).slice(-2);
+  }).join("");
+}

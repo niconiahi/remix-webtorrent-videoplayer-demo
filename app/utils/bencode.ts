@@ -1,6 +1,4 @@
 function decodeString(bdata: string) {
-  console.log("--------------");
-
   if (isNaN(Number(bdata[0]))) {
     throw new Error("invalid string identifier, it should start with a number");
   }
@@ -10,16 +8,17 @@ function decodeString(bdata: string) {
   const start = delimiter + 1;
   const string = bdata.slice(start, start + length);
 
-  console.log("start =>", start);
-  console.log("initial bdata =>", bdata);
-  console.log("initial bdata length =>", bdata.length);
-  console.log("string captured =>", string);
-  console.log("string captured length =>", string.length);
-  console.log("amount to be sliced =>", length + start);
+  // console.log("--------------");
+  // console.log("start =>", start);
+  // console.log("initial bdata =>", bdata);
+  // console.log("initial bdata length =>", bdata.length);
+  // console.log("string captured =>", string);
+  // console.log("string captured length =>", string.length);
+  // console.log("amount to be sliced =>", length + start);
 
   bdata = bdata.slice(start + length);
-  console.log("remaning bdata =>", bdata);
-  console.log("remaning bdata length =>", bdata.length);
+  // console.log("remaning bdata =>", bdata);
+  // console.log("remaning bdata length =>", bdata.length);
 
   if (string.length !== length) {
     const encoder = new TextEncoder();

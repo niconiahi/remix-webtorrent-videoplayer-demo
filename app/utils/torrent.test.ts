@@ -26,5 +26,4 @@ describe("hexToBinary", () => {
       "%03%c4%f0%7d%aa%87%18%b2%b4%dd%99%f5%51%67%62%39%c4%1b%dc%cc"
     );
   });
-  // nyaa.tracker.wf:7777/announce?info_hash=%03%c4%f0%7d%aa%87%18%b2%b4%dd%99%f5%51%67%62%39%c4%1b%dc%cc&peer_id=TR2840-k8hgf7d5k2srx&port=1223
 });

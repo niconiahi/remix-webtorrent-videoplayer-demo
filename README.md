@@ -1,22 +1,16 @@
-# Welcome to Remix!
+### Expectations
+In this repo you'll see an attempt to create a Stremio like application but implemented only using Web APIs 
 
-- [Remix Docs](https://remix.run/docs)
+### Files to pay attention
+1. [_index.tsx](/app/routes/_index.tsx)
+2. [sse.torrent.tsx](/app/routes/sse.torrent.ts)
+3. [magnet.ts](/app/utils/magnet.ts)
+3. [torrent.ts](/app/utils/torrent.ts)
 
-## Development
+### Instructions
 
-You will be utilizing Wrangler for local development to emulate the Cloudflare runtime. This is already wired up in your package.json as the `dev` script:
+#### Run the demo
+- Run the the `npm run dev` command and inspect your console, you'll see helpful messages there. Up until now the decoding of the peers works sometimes so you have to refresh the page until the binary is correctly parsed
 
-```sh
-# start the remix dev server and wrangler
-npm run dev
-```
-
-Open up [http://127.0.0.1:8788](http://127.0.0.1:8788) and you should be ready to go!
-
-## Deployment
-
-Cloudflare Pages are currently only deployable through their Git provider integrations.
-
-If you don't already have an account, then [create a Cloudflare account here](https://dash.cloudflare.com/sign-up/pages) and after verifying your email address with Cloudflare, go to your dashboard and follow the [Cloudflare Pages deployment guide](https://developers.cloudflare.com/pages/framework-guides/deploy-anything).
-
-Configure the "Build command" should be set to `npm run build`, and the "Build output directory" should be set to `public`.
+#### Run the test
+- Run the the `npm run test` command to see all the current available tests for the different utils in the repository
